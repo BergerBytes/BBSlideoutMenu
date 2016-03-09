@@ -444,8 +444,6 @@ public class BBSlideoutMenu: UIView  {
             break
         }
         
-        
-        
     }
     
     

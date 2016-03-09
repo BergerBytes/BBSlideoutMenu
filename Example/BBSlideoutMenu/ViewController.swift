@@ -65,8 +65,56 @@ class ViewController: UIViewController, BBSlideoutMenuDelegate {
         setNeedsStatusBarAppearanceUpdate()
     }
     
+    //MARK: - Slideout Menu outlets/actions live in the same viewcontroller!
     
-    //MARK: - Test app
+    @IBOutlet weak var twitterLabel: UILabel!
+    @IBAction func onTwitterTapped(sender: AnyObject) {
+        let screenName =  twitterLabel.text!
+        let appURL = NSURL(string: "twitter://user?screen_name=\(screenName)")!
+        let webURL = NSURL(string: "https://twitter.com/\(screenName)")!
+        
+        openApp(appURL, webURL: webURL)
+    }
+    
+    
+    @IBOutlet weak var linkedinLabel: UILabel!
+    @IBAction func onLinkedInTapped(sender: AnyObject) {
+        let screenName =  linkedinLabel.text!
+        let appURL = NSURL(string: "linkedin://profile?id=\(screenName)")!
+        let webURL = NSURL(string: "https://www.linkedin.com/in/\(screenName)")!
+        
+        openApp(appURL, webURL: webURL)
+    }
+    
+    
+    @IBOutlet weak var instagramLabel: UILabel!
+    @IBAction func onInstagramTapped(sender: AnyObject) {
+        let screenName =  instagramLabel.text!
+        let appURL = NSURL(string: "instagram://user?username=\(screenName)")!
+        let webURL = NSURL(string: "https://www.instagram.com/\(screenName)")!
+        
+        openApp(appURL, webURL: webURL)
+    }
+    
+    @IBOutlet weak var youtubeLabel: UILabel!
+    @IBAction func onYouTubeTapped(sender: AnyObject) {
+        let screenName =  youtubeLabel.text!
+        let appURL = NSURL(string: "vnd.youtube://user/\(screenName)")!
+        let webURL = NSURL(string: "https://www.youtube.com/\(screenName)")!
+        
+        openApp(appURL, webURL: webURL)
+    }
+    
+    func openApp(appURL: NSURL, webURL: NSURL) {
+        let application = UIApplication.sharedApplication()
+        
+        if !application.openURL(appURL) {
+            application.openURL(webURL)
+        }
+ 
+    }
+    
+    //MARK: - Test app Junk
     
     @IBOutlet weak var directionSegmentedControl: UISegmentedControl!
     @IBOutlet weak var shrinkAmountTextField: UITextField!
