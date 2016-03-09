@@ -1,0 +1,12 @@
+source 'https://github.com/CocoaPods/Specs.git'
+use_frameworks!
+
+target 'BBSlideoutMenu_Example', :exclusive => true do
+  pod 'BBSlideoutMenu', :path => '../'
+end
+
+target 'BBSlideoutMenu_Tests', :exclusive => true do
+  pod 'BBSlideoutMenu', :path => '../'
+
+  
+end
