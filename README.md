@@ -22,7 +22,7 @@ pod "BBSlideoutMenu"
 
 ## Author
 
-Michael Berger, michaeledwardberger@live.com
+Michael Berger, contact@bergerbytes.co
 
 ## License
 
