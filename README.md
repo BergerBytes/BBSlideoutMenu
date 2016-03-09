@@ -19,7 +19,7 @@ it, simply add the following line to your Podfile:
 ```ruby
 pod "BBSlideoutMenu"
 ```
-## Setup
+## Media
 
 ![alt tag](https://bergerbytesco.files.wordpress.com/2016/03/giphy.gif)
 
