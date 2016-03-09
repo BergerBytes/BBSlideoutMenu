@@ -13,8 +13,14 @@ public enum Direction {
     case Right
 }
 
-public protocol BBSlideoutMenuDelegate {
-    func BBSlideoutMenuDidPresent(menu: BBSlideoutMenu)
+public protocol BBSlideoutMenuDelegate: class {
+    func didPresentBBSlideoutMenu(menu: BBSlideoutMenu)
+    func willPresentBBSlideoutMenu(menu: BBSlideoutMenu)
+    
+    func didDismissBBSlideoutMenu(menu: BBSlideoutMenu)
+    func willDismissBBSlideoutMenu(menu: BBSlideoutMenu)
+    
+    func didStartEdgePanForBBSlideOutMenu(menu: BBSlideoutMenu)
 }
 
 public class BBSlideoutMenu: UIView  {
@@ -56,9 +62,9 @@ public class BBSlideoutMenu: UIView  {
         }
     }
     
-    @IBInspectable public var menuOffset: CGFloat = 0
+    @IBInspectable public var menuOffset: CGFloat = 150
     @IBInspectable public var slideTime: Double = 0.5
-    @IBInspectable public var zoomFactor: CGFloat = 0.75
+    @IBInspectable public var zoomFactor: CGFloat = 0.8
     
    
     @IBInspectable public var springEnabled: Bool = true
@@ -66,7 +72,15 @@ public class BBSlideoutMenu: UIView  {
      The damping ratio for the spring animation as it approaches its quiescent state.
      To smoothly decelerate the animation without oscillation, use a value of 1. Employ a damping ratio closer to zero to increase oscillation.
      */
-    @IBInspectable public var springDamping: CGFloat = 0.5
+    @IBInspectable public var springDamping: CGFloat = 0.5 {
+        didSet {
+            if springDamping < 0 {
+                springDamping = 0
+            } else if springDamping > 1 {
+                springDamping = 1
+            }
+        }
+    }
     
     //MARK: - Properties
     ///The direction the view will travel to make room for the menu. Uses .Left or .Right
@@ -93,14 +107,17 @@ public class BBSlideoutMenu: UIView  {
     //MARK: - Functions
     
     /**
-    
-    Sets up a EdgePan gesture to open the Slide Menu
-    
+    Sets up a EdgePan gesture to open the Slide Menu. Must be called again if the slideDirection has been changed
     */
     public func setupEdgePan() {
         
         if keyWindow == nil {
             keyWindow = UIApplication.sharedApplication().keyWindow!
+        }
+        
+        if  let epGesture = edgePanGesture,
+            let index = self.keyWindow.gestureRecognizers?.indexOf(epGesture) {
+                self.keyWindow.gestureRecognizers?.removeAtIndex(index)
         }
         
         edgePanGesture = UIScreenEdgePanGestureRecognizer(target: self, action: "edgeHandle:")
@@ -110,7 +127,7 @@ public class BBSlideoutMenu: UIView  {
     
     /**
      Shows the slide out menu
-     
+     - parameter animate: A Bool that specifies whether to animate the transition
      - parameter didPresentMenu: Calls when the animation is completed, Pass nil to ignore callback
      */
     public func presentSlideMenu(animate: Bool?, didPresentMenu: (() -> Void)?) {
@@ -168,7 +185,7 @@ public class BBSlideoutMenu: UIView  {
         keyWindow.insertSubview(self, belowSubview: viewImage!)
         
         self.translatesAutoresizingMaskIntoConstraints = false
-        
+                
         self.heightAnchor.constraintEqualToConstant(size.height).active                      = true
         self.widthAnchor.constraintEqualToConstant((size.width * slideTravelPercent)).active = true
         self.centerYAnchor.constraintEqualToAnchor(keyWindow.centerYAnchor).active           = true
@@ -193,9 +210,11 @@ public class BBSlideoutMenu: UIView  {
                     didPresentMenu?()
                 }
             } else {
+                delegate?.willPresentBBSlideoutMenu(self)
                 self.viewImage!.layer.cornerRadius = 5
                 self.transform = CGAffineTransformMakeScale(1, 1)
                 didPresentMenu?()
+                delegate?.didPresentBBSlideoutMenu(self)
             }
             
         }
@@ -210,14 +229,15 @@ public class BBSlideoutMenu: UIView  {
     /**
      Dismisses the slide menu
      
-     - parameter sender: **pass NIL if you are invoking manually**
+     - parameter animated: A Bool that specifies whether to animate the transition
      - parameter time: Time in seconds the animation will take. Pass nil to use default value setup in storyboard
      */
-    public func dismissSlideMenu(animated: Bool, time: Double?) {
-        
+    public func dismissSlideMenu(animated animated: Bool, time: Double?) {
         if keyWindow == nil {
             keyWindow = UIApplication.sharedApplication().keyWindow!
         }
+        
+        delegate?.willDismissBBSlideoutMenu(self)
         
         viTop.constant    = 0
         viBottom.constant = -viTop.constant
@@ -253,7 +273,7 @@ public class BBSlideoutMenu: UIView  {
                                 self.keyWindow.gestureRecognizers?.append(epGesture)
                             }
                         }
-                        
+                        self.delegate?.didDismissBBSlideoutMenu(self)
                 })
                 
         }
@@ -281,7 +301,9 @@ public class BBSlideoutMenu: UIView  {
             keyWindow = UIApplication.sharedApplication().keyWindow!
         }
         
-        if  let epGesture = edgePanGesture,
+        delegate?.willPresentBBSlideoutMenu(self)
+        
+        if let epGesture = edgePanGesture,
             let index = self.keyWindow.gestureRecognizers?.indexOf(epGesture) {
                 self.keyWindow.gestureRecognizers?.removeAtIndex(index)
         }
@@ -301,7 +323,7 @@ public class BBSlideoutMenu: UIView  {
                 self.transform = CGAffineTransformMakeScale(1, 1)
                 
             }) { (complete) -> Void in
-                
+                self.delegate?.didPresentBBSlideoutMenu(self)
                 animationEnd?()
         }
         
@@ -318,7 +340,7 @@ public class BBSlideoutMenu: UIView  {
     
     
     func tapHandle(tap: UITapGestureRecognizer) {
-        dismissSlideMenu(true, time: nil)
+        dismissSlideMenu(animated: true, time: nil)
     }
     
     func panHandle(pan: UIPanGestureRecognizer) {
@@ -356,7 +378,7 @@ public class BBSlideoutMenu: UIView  {
             let v = pan.velocityInView(keyWindow).x
             
             if (slideDirection == .Left ? v : -v) > 500 || abs(percentage) > 0.8 {
-                dismissSlideMenu(true, time: slideTime - abs((slideTime * Double(percentage))))
+                dismissSlideMenu(animated: true, time: slideTime - abs((slideTime * Double(percentage))))
             } else {
                 animateSlideOpen(nil)
             }
@@ -373,6 +395,8 @@ public class BBSlideoutMenu: UIView  {
         if keyWindow == nil {
             keyWindow = UIApplication.sharedApplication().keyWindow!
         }
+        
+        delegate?.didStartEdgePanForBBSlideOutMenu(self)
         
         var transition = edge.translationInView(self)
         var percentage = (transition.x / self.bounds.width)
@@ -413,7 +437,7 @@ public class BBSlideoutMenu: UIView  {
                 })
                 
             } else {
-                dismissSlideMenu(true, time: 0.1)
+                dismissSlideMenu(animated: true, time: 0.1)
             }
             
         default:
@@ -427,4 +451,13 @@ public class BBSlideoutMenu: UIView  {
     
     
     //MARK: -
+}
+
+
+public extension BBSlideoutMenuDelegate {
+    func didPresentBBSlideoutMenu(menu: BBSlideoutMenu) {}
+    func willPresentBBSlideoutMenu(menu: BBSlideoutMenu) {}
+    func didDismissBBSlideoutMenu(menu: BBSlideoutMenu) {}
+    func willDismissBBSlideoutMenu(menu: BBSlideoutMenu) {}
+    func didStartEdgePanForBBSlideOutMenu(menu: BBSlideoutMenu) {}
 }
