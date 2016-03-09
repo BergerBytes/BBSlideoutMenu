@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6211" systemVersion="14A298i" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="vXZ-lx-hvc">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9532" systemVersion="15D21" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="vXZ-lx-hvc">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6204"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9530"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
         <scene sceneID="ufC-wZ-h7g">
             <objects>
-                <viewController id="vXZ-lx-hvc" customClass="ViewController" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="vXZ-lx-hvc" customClass="ViewController" customModule="BBSlideoutMenu_Example" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="jyV-Pf-zRb"/>
                         <viewControllerLayoutGuide type="bottom" id="2fi-mo-0CV"/>
@@ -15,11 +16,84 @@
                     <view key="view" contentMode="scaleToFill" id="kh9-bI-dsS">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="BBSlideOutMenu" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ugk-TD-dGU">
+                                <rect key="frame" x="20" y="72" width="560" height="21"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="21" id="PQT-E2-21l"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Avenir-Book" family="Avenir" pointSize="20"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" image="noun_swipe-left_126348" translatesAutoresizingMaskIntoConstraints="NO" id="vb5-x1-hlr">
+                                <rect key="frame" x="460" y="454" width="150" height="150"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="150" id="5rb-3n-xQR"/>
+                                    <constraint firstAttribute="height" constant="150" id="kmn-yE-4mq"/>
+                                </constraints>
+                            </imageView>
+                            <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" image="noun_swipe-right_126345" translatesAutoresizingMaskIntoConstraints="NO" id="zFi-ds-IFB">
+                                <rect key="frame" x="-12" y="454" width="150" height="150"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="150" id="Z6h-9g-dvP"/>
+                                    <constraint firstAttribute="width" constant="150" id="nQa-Xc-2mT"/>
+                                </constraints>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VNE-QJ-w98">
+                                <rect key="frame" x="263" y="344" width="74" height="74"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="74" id="2QH-wf-AO8"/>
+                                    <constraint firstAttribute="height" constant="74" id="is9-ba-QMz"/>
+                                </constraints>
+                                <state key="normal" image="noun_play_160936"/>
+                                <connections>
+                                    <action selector="onButtonTapped:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="bRl-4d-bhC"/>
+                                </connections>
+                            </button>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="ugk-TD-dGU" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" constant="52" id="D0K-Jz-Bq6"/>
+                            <constraint firstItem="zFi-ds-IFB" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leadingMargin" constant="-32" id="DZ7-LA-EgA"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="vb5-x1-hlr" secondAttribute="trailing" constant="-30" id="Eez-CE-hNN"/>
+                            <constraint firstItem="VNE-QJ-w98" firstAttribute="centerX" secondItem="kh9-bI-dsS" secondAttribute="centerX" id="Ege-OC-f7v"/>
+                            <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="VNE-QJ-w98" secondAttribute="bottom" constant="182" id="U0I-VO-5Cj"/>
+                            <constraint firstItem="ugk-TD-dGU" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leadingMargin" id="cYZ-wr-l66"/>
+                            <constraint firstItem="ugk-TD-dGU" firstAttribute="trailing" secondItem="kh9-bI-dsS" secondAttribute="trailingMargin" id="ofl-hS-CQO"/>
+                            <constraint firstAttribute="bottomMargin" secondItem="vb5-x1-hlr" secondAttribute="bottom" constant="-4" id="xDk-i9-FWb"/>
+                            <constraint firstAttribute="bottomMargin" secondItem="zFi-ds-IFB" secondAttribute="bottom" constant="-4" id="y1k-mG-QU9"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="buttonSlideMenu" destination="J4N-6T-98H" id="xDi-aN-mea"/>
+                        <outlet property="leftSwipeSlideMenu" destination="8Lr-IT-6ic" id="4GH-Oq-Ce7"/>
+                        <outlet property="rightSwipeSlideMenu" destination="4q6-fp-iPN" id="KiU-of-EY9"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
+                <view contentMode="scaleToFill" id="8Lr-IT-6ic" customClass="BBSlideoutMenu" customModule="BBSlideoutMenu">
+                    <rect key="frame" x="0.0" y="0.0" width="240" height="354"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <color key="backgroundColor" red="0.0" green="0.21296004495440679" blue="0.26542467948717952" alpha="1" colorSpace="calibratedRGB"/>
+                </view>
+                <view contentMode="scaleToFill" id="J4N-6T-98H" customClass="BBSlideoutMenu" customModule="BBSlideoutMenu">
+                    <rect key="frame" x="0.0" y="0.0" width="240" height="354"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <color key="backgroundColor" red="0.1215686275" green="0.12941176469999999" blue="0.14117647059999999" alpha="1" colorSpace="calibratedRGB"/>
+                </view>
+                <view contentMode="scaleToFill" id="4q6-fp-iPN" customClass="BBSlideoutMenu" customModule="BBSlideoutMenu">
+                    <rect key="frame" x="0.0" y="0.0" width="240" height="354"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <color key="backgroundColor" red="0.18633814102564106" green="0.0" blue="0.019115710446425852" alpha="1" colorSpace="calibratedRGB"/>
+                </view>
             </objects>
+            <point key="canvasLocation" x="305" y="429"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="noun_play_160936" width="150" height="150"/>
+        <image name="noun_swipe-left_126348" width="150" height="150"/>
+        <image name="noun_swipe-right_126345" width="150" height="150"/>
+    </resources>
 </document>

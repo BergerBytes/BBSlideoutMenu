@@ -1,0 +1,6 @@
+framework module BBSlideoutMenu {
+  umbrella header "BBSlideoutMenu-umbrella.h"
+
+  export *
+  module * { export * }
+}

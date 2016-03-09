@@ -7,18 +7,30 @@
 //
 
 import UIKit
+import BBSlideoutMenu
 
 class ViewController: UIViewController {
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+    
+    @IBOutlet var leftSwipeSlideMenu:  BBSlideoutMenu!
+    @IBOutlet var buttonSlideMenu:     BBSlideoutMenu!
+    @IBOutlet var rightSwipeSlideMenu: BBSlideoutMenu!
+    
+    override func viewDidAppear(animated: Bool) {
+       super.viewDidAppear(animated)
+        leftSwipeSlideMenu.setupEdgePan()
+        rightSwipeSlideMenu.setupEdgePan()
+        
+       
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    
+    @IBAction func onButtonTapped(sender: UIButton) {
+        
+        
+        
     }
-
+    
+    
 }
 

@@ -1,0 +1,14 @@
+PODS:
+  - BBSlideoutMenu (0.1.0)
+
+DEPENDENCIES:
+  - BBSlideoutMenu (from `../`)
+
+EXTERNAL SOURCES:
+  BBSlideoutMenu:
+    :path: ../
+
+SPEC CHECKSUMS:
+  BBSlideoutMenu: 304bddbe6259026a2d7a7f384ec02d5d73dc5f45
+
+COCOAPODS: 0.39.0
