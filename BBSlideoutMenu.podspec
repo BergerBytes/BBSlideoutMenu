@@ -20,7 +20,7 @@ Pod::Spec.new do |s|
                        DESC
 
   s.homepage         = "https://github.com/BergerBytes/BBSlideoutMenu"
-  # s.screenshots    = "www.example.com/screenshots_1", "https://bergerbytesco.files.wordpress.com/2016/03/giphy.gif"
+  # s.screenshots    = "https://bergerbytesco.files.wordpress.com/2016/03/giphy.gif"
   s.license          = 'MIT'
   s.author           = { "Michael Berger" => "contact@bergerbytes.co" }
   s.source           = { :git => "https://github.com/BergerBytes/BBSlideoutMenu.git", :tag => s.version.to_s }
@@ -28,7 +28,7 @@ Pod::Spec.new do |s|
 
   s.platform     = :ios, '9.0'
   s.requires_arc = true
-  s.source_files = 'Pod/Classes/**/*'
+  s.source_files = 'Pod/Classes/'
   s.resource_bundles = {
     'BBSlideoutMenu' => ['Pod/Assets/*.png']
   }
