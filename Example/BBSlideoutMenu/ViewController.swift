@@ -13,13 +13,12 @@ class ViewController: UIViewController, BBSlideoutMenuDelegate {
 
     
     @IBOutlet var buttonSlideMenu:     BBSlideoutMenu!
-    
+        
     override func viewDidAppear(animated: Bool) {
        super.viewDidAppear(animated)
         
         // Call .setupEdgePan() after the view is done loading and presented to enable edge panning
         buttonSlideMenu.setupEdgePan()
-        
         // Setup the optional delegate to get a call back when the menu did show
         buttonSlideMenu.delegate = self
     }
