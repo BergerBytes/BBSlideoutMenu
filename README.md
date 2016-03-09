@@ -1,6 +1,6 @@
 # BBSlideoutMenu
 
-[![CI Status](http://img.shields.io/travis/Michael Berger/BBSlideoutMenu.svg?style=flat)](https://travis-ci.org/Michael Berger/BBSlideoutMenu)
+[![CI Status](http://img.shields.io/travis/Michael Berger/BBSlideoutMenu.svg?style=flat)](https://travis-ci.org/BergerBytes/BBSlideoutMenu)
 [![Version](https://img.shields.io/cocoapods/v/BBSlideoutMenu.svg?style=flat)](http://cocoapods.org/pods/BBSlideoutMenu)
 [![License](https://img.shields.io/cocoapods/l/BBSlideoutMenu.svg?style=flat)](http://cocoapods.org/pods/BBSlideoutMenu)
 [![Platform](https://img.shields.io/cocoapods/p/BBSlideoutMenu.svg?style=flat)](http://cocoapods.org/pods/BBSlideoutMenu)
