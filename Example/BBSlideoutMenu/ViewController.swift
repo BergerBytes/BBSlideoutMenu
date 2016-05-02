@@ -12,19 +12,17 @@ import BBSlideoutMenu
 class ViewController: UIViewController, BBSlideoutMenuDelegate {
 
     
-    @IBOutlet var buttonSlideMenu:     BBSlideoutMenu!
-        
+    @IBOutlet var buttonSlideMenu: BBSlideoutMenu!
     override func viewDidAppear(animated: Bool) {
        super.viewDidAppear(animated)
-        
         // Call .setupEdgePan() after the view is done loading and presented to enable edge panning
         buttonSlideMenu.setupEdgePan()
         // Setup the optional delegate to get a call back when the menu did show
         buttonSlideMenu.delegate = self
     }
 
+    
     func updateSettings() {
-        
         buttonSlideMenu.slideTravelPercent = CGFloat(travelSlider.value)
         buttonSlideMenu.shrinkAmount       = CGFloat(Double(shrinkAmountTextField.text!)!)
         buttonSlideMenu.menuOffset         = CGFloat(Double(menuOffsetTextField.text!)!)
@@ -32,6 +30,7 @@ class ViewController: UIViewController, BBSlideoutMenuDelegate {
         buttonSlideMenu.zoomFactor         = CGFloat(zoomFactorSlider.value)
         buttonSlideMenu.springEnabled      = springEnabledSwitch.on
         buttonSlideMenu.springDamping      = CGFloat(springDampingSlider.value)
+        buttonSlideMenu.backgroundImage    = backgroundSwitch.on ? UIImage(named: "Background") : nil;
     }
     
     @IBAction func onButtonTapped(sender: UIButton) {
@@ -150,13 +149,12 @@ class ViewController: UIViewController, BBSlideoutMenuDelegate {
         rightSwipeImageView.hidden = !Bool(sender.selectedSegmentIndex)
     }
     
-    
-    
     @IBOutlet weak var springEnabledSwitch: UISwitch!
+    @IBOutlet weak var backgroundSwitch: UISwitch!
     
     
     @IBAction func tapHandle(sender: UITapGestureRecognizer) {
-        UIApplication.sharedApplication().sendAction("resignFirstResponder", to:nil, from:nil, forEvent:nil)
+        UIApplication.sharedApplication().sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, forEvent:nil)
     }
     
     var statusBarStyle = UIStatusBarStyle.Default

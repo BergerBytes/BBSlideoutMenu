@@ -65,8 +65,6 @@ public class BBSlideoutMenu: UIView  {
     @IBInspectable public var menuOffset: CGFloat = 150
     @IBInspectable public var slideTime: Double = 0.5
     @IBInspectable public var zoomFactor: CGFloat = 0.8
-    
-   
     @IBInspectable public var springEnabled: Bool = true
     /**
      The damping ratio for the spring animation as it approaches its quiescent state.
@@ -90,6 +88,14 @@ public class BBSlideoutMenu: UIView  {
         }
     }
     
+    public var backgroundImage: UIImage? {
+        didSet {
+            if backgroundImage == nil {
+                self.backgroundColor = savedBackgroundColor;
+            }
+        }
+    }
+    
     public var delegate: BBSlideoutMenuDelegate?
     
     private
@@ -99,17 +105,21 @@ public class BBSlideoutMenu: UIView  {
     var viBottom: NSLayoutConstraint!
     var viSlide: NSLayoutConstraint!
     var viRatio: NSLayoutConstraint!
-    var coverView: UIView!
+    var coverView: UIImageView!
     var keyWindow: UIWindow!
     var slideAmount: CGFloat!
     var edgePanGesture: UIScreenEdgePanGestureRecognizer?
-    
+    var savedBackgroundColor: UIColor!
     //MARK: - Functions
     
     /**
     Sets up a EdgePan gesture to open the Slide Menu. Must be called again if the slideDirection has been changed
     */
     public func setupEdgePan() {
+        
+        if savedBackgroundColor == nil {
+            savedBackgroundColor = self.backgroundColor;
+        }
         
         if keyWindow == nil {
             keyWindow = UIApplication.sharedApplication().keyWindow!
@@ -120,7 +130,7 @@ public class BBSlideoutMenu: UIView  {
                 self.keyWindow.gestureRecognizers?.removeAtIndex(index)
         }
         
-        edgePanGesture = UIScreenEdgePanGestureRecognizer(target: self, action: "edgeHandle:")
+        edgePanGesture = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(BBSlideoutMenu.edgeHandle(_:)))
         edgePanGesture?.edges = slideDirection == .Left ? .Right : .Left
         keyWindow.gestureRecognizers?.append(edgePanGesture!)
     }
@@ -131,6 +141,10 @@ public class BBSlideoutMenu: UIView  {
      - parameter didPresentMenu: Calls when the animation is completed, Pass nil to ignore callback
      */
     public func presentSlideMenu(animate: Bool?, didPresentMenu: (() -> Void)?) {
+        
+        if savedBackgroundColor == nil {
+            savedBackgroundColor = self.backgroundColor;
+        }
         
         if keyWindow == nil {
             keyWindow = UIApplication.sharedApplication().keyWindow!
@@ -173,13 +187,17 @@ public class BBSlideoutMenu: UIView  {
         viSlide.active  = true
         
         //MARK: Background View
+        coverView = UIImageView(frame: keyWindow.frame)
         
-        coverView                 = UIView(frame: keyWindow.frame)
-        coverView.backgroundColor = self.backgroundColor
-        coverView.hidden          = false
-        
+        if let validBackgroundImage = backgroundImage {
+            coverView.image = validBackgroundImage
+            coverView.contentMode = .ScaleAspectFill
+            backgroundColor = UIColor.clearColor()
+        } else {
+            coverView.backgroundColor = self.backgroundColor
+        }
+        coverView.hidden = false
         keyWindow.insertSubview(coverView, belowSubview: viewImage!)
-        
         //MARK: Slideout View
         
         keyWindow.insertSubview(self, belowSubview: viewImage!)
@@ -219,8 +237,8 @@ public class BBSlideoutMenu: UIView  {
             
         }
         
-        let panGesture = UIPanGestureRecognizer(target: self, action: "panHandle:")
-        let tapGesture = UITapGestureRecognizer(target: self, action: "tapHandle:")
+        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(BBSlideoutMenu.panHandle(_:)))
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(BBSlideoutMenu.tapHandle(_:)))
         self.viewImage!.gestureRecognizers = [panGesture, tapGesture]
         
     }
