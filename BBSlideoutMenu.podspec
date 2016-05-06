@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "BBSlideoutMenu"
-  s.version          = "0.1.1"
+  s.version          = "0.2.1"
   s.summary          = "A simple 'one line of code' Slideout Menu solution without the need for segues"
 
 # This description is used to generate tags and improve search results.
@@ -19,12 +19,12 @@ Pod::Spec.new do |s|
   s.description      = <<-DESC "A simple solution for creating great looking slideout menus quickly. By nesting the menu view in the scene dock you can visually edit the menu whilst skipping the need to manage data between segues and view controllers."
                        DESC
 
-  s.homepage         = "https://github.com/BergerBytes/BBSlideoutMenu"
+  s.homepage         = "http://bergerbytes.io/cocoapods/bbslideoutmenu/"
   # s.screenshots    = "https://bergerbytesco.files.wordpress.com/2016/03/giphy.gif"
   s.license          = 'MIT'
   s.author           = { "Michael Berger" => "contact@bergerbytes.co" }
   s.source           = { :git => "https://github.com/BergerBytes/BBSlideoutMenu.git", :tag => s.version.to_s }
-  # s.social_media_url = 'https://twitter.com/bergerbytes'
+  s.social_media_url = 'https://twitter.com/bergerbytes'
 
   s.platform     = :ios, '9.0'
   s.requires_arc = true
