@@ -7,7 +7,7 @@
 
 ## Usage
 
-To run the example project, clone the repo, and run `pod install` from the Example directory first.
+Full API and directions available at http://bergerbytes.io/cocoapods/bbslideoutmenu/
 
 ## Requirements
 
