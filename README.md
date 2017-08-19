@@ -25,7 +25,7 @@ pod "BBSlideoutMenu"
 
 ## Author
 
-Michael Berger, bergerbytes.io , contact@bergerbytes.co
+Michael Berger, bergerbytes.io , contact@bergerbytes.io
 
 ## License
 
