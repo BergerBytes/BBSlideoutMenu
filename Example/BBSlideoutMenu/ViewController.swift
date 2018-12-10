@@ -36,7 +36,7 @@ class ViewController: UIViewController, BBSlideoutMenuDelegate {
     @IBAction func onButtonTapped(sender: UIButton) {
         updateSettings()
         
-        buttonSlideMenu.presentSlideMenu(true) { () -> Void in
+        buttonSlideMenu.presentSlideMenu(animated: true) { () -> Void in
             //Runs after menu is presented
         }
     }
@@ -44,7 +44,6 @@ class ViewController: UIViewController, BBSlideoutMenuDelegate {
     @IBAction func onDismissButtonTapped(sender: UIButton) {
         buttonSlideMenu.dismissSlideMenu(true, time: nil)
     }
-    
     
     func didStartEdgePanForBBSlideOutMenu(menu: BBSlideoutMenu) {
         updateSettings()
