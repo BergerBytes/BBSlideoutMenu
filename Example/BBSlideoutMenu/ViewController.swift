@@ -13,7 +13,7 @@ class ViewController: UIViewController, BBSlideoutMenuDelegate {
 
     
     @IBOutlet var buttonSlideMenu: BBSlideoutMenu!
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
        super.viewDidAppear(animated)
         // Call .setupEdgePan() after the view is done loading and presented to enable edge panning
         buttonSlideMenu.setupEdgePan()
@@ -28,13 +28,12 @@ class ViewController: UIViewController, BBSlideoutMenuDelegate {
         buttonSlideMenu.menuOffset         = CGFloat(Double(menuOffsetTextField.text!)!)
         buttonSlideMenu.slideTime          = Double(slideTimeTextField.text!)!
         buttonSlideMenu.zoomFactor         = CGFloat(zoomFactorSlider.value)
-        buttonSlideMenu.springEnabled      = springEnabledSwitch.on
+        buttonSlideMenu.springEnabled      = springEnabledSwitch.isOn
         buttonSlideMenu.springDamping      = CGFloat(springDampingSlider.value)
-        buttonSlideMenu.backgroundImage    = backgroundSwitch.on ? UIImage(named: "Background") : nil;
+        buttonSlideMenu.backgroundImage    = backgroundSwitch.isOn ? UIImage(named: "Background") : nil;
     }
     
     @IBAction func onButtonTapped(sender: UIButton) {
-        
         updateSettings()
         
         buttonSlideMenu.presentSlideMenu(true) { () -> Void in
@@ -43,24 +42,24 @@ class ViewController: UIViewController, BBSlideoutMenuDelegate {
     }
     
     @IBAction func onDismissButtonTapped(sender: UIButton) {
-        buttonSlideMenu.dismissSlideMenu(animated: true, time: nil)
+        buttonSlideMenu.dismissSlideMenu(true, time: nil)
     }
     
     
     func didStartEdgePanForBBSlideOutMenu(menu: BBSlideoutMenu) {
         updateSettings()
         
-        statusBarStyle = .LightContent
+        statusBarStyle = .lightContent
         setNeedsStatusBarAppearanceUpdate()
     }
     
     func willPresentBBSlideoutMenu(menu: BBSlideoutMenu) {
-        statusBarStyle = .LightContent
+        statusBarStyle = .lightContent
         setNeedsStatusBarAppearanceUpdate()
     }
     
     func willDismissBBSlideoutMenu(menu: BBSlideoutMenu) {
-        statusBarStyle = .Default
+        statusBarStyle = .default
         setNeedsStatusBarAppearanceUpdate()
     }
     
@@ -69,43 +68,43 @@ class ViewController: UIViewController, BBSlideoutMenuDelegate {
     @IBOutlet weak var twitterLabel: UILabel!
     @IBAction func onTwitterTapped(sender: AnyObject) {
         let screenName =  twitterLabel.text!
-        let appURL = NSURL(string: "twitter://user?screen_name=\(screenName)")!
-        let webURL = NSURL(string: "https://twitter.com/\(screenName)")!
+        let appURL = URL(string: "twitter://user?screen_name=\(screenName)")!
+        let webURL = URL(string: "https://twitter.com/\(screenName)")!
         
-        openApp(appURL, webURL: webURL)
+        openApp(appURL: appURL, webURL: webURL)
     }
     
     
     @IBOutlet weak var linkedinLabel: UILabel!
     @IBAction func onLinkedInTapped(sender: AnyObject) {
         let screenName =  linkedinLabel.text!
-        let appURL = NSURL(string: "linkedin://profile?id=\(screenName)")!
-        let webURL = NSURL(string: "https://www.linkedin.com/in/\(screenName)")!
+        let appURL = URL(string: "linkedin://profile?id=\(screenName)")!
+        let webURL = URL(string: "https://www.linkedin.com/in/\(screenName)")!
         
-        openApp(appURL, webURL: webURL)
+        openApp(appURL: appURL, webURL: webURL)
     }
     
     
     @IBOutlet weak var instagramLabel: UILabel!
     @IBAction func onInstagramTapped(sender: AnyObject) {
         let screenName =  instagramLabel.text!
-        let appURL = NSURL(string: "instagram://user?username=\(screenName)")!
-        let webURL = NSURL(string: "https://www.instagram.com/\(screenName)")!
+        let appURL = URL(string: "instagram://user?username=\(screenName)")!
+        let webURL = URL(string: "https://www.instagram.com/\(screenName)")!
         
-        openApp(appURL, webURL: webURL)
+        openApp(appURL: appURL, webURL: webURL)
     }
     
     @IBOutlet weak var youtubeLabel: UILabel!
     @IBAction func onYouTubeTapped(sender: AnyObject) {
         let screenName =  youtubeLabel.text!
-        let appURL = NSURL(string: "vnd.youtube://user/\(screenName)")!
-        let webURL = NSURL(string: "https://www.youtube.com/\(screenName)")!
+        let appURL = URL(string: "vnd.youtube://user/\(screenName)")!
+        let webURL = URL(string: "https://www.youtube.com/\(screenName)")!
         
-        openApp(appURL, webURL: webURL)
+        openApp(appURL: appURL, webURL: webURL)
     }
     
-    func openApp(appURL: NSURL, webURL: NSURL) {
-        let application = UIApplication.sharedApplication()
+    func openApp(appURL: URL, webURL: URL) {
+        let application = UIApplication.shared
         
         if !application.openURL(appURL) {
             application.openURL(webURL)
@@ -142,11 +141,11 @@ class ViewController: UIViewController, BBSlideoutMenuDelegate {
     @IBOutlet weak var rightSwipeImageView: UIImageView!
 
     @IBAction func onDirectionSegmentChanged(sender: UISegmentedControl) {
-        buttonSlideMenu.slideDirection = sender.selectedSegmentIndex == 0 ? .Left : .Right
+        buttonSlideMenu.slideDirection = sender.selectedSegmentIndex == 0 ? .left : .right
         buttonSlideMenu.setupEdgePan()
         
-        leftSwipeImageView.hidden  = Bool(sender.selectedSegmentIndex)
-        rightSwipeImageView.hidden = !Bool(sender.selectedSegmentIndex)
+        leftSwipeImageView.isHidden = sender.selectedSegmentIndex == 1
+        rightSwipeImageView.isHidden = sender.selectedSegmentIndex == 0
     }
     
     @IBOutlet weak var springEnabledSwitch: UISwitch!
@@ -154,14 +153,11 @@ class ViewController: UIViewController, BBSlideoutMenuDelegate {
     
     
     @IBAction func tapHandle(sender: UITapGestureRecognizer) {
-        UIApplication.sharedApplication().sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, forEvent:nil)
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, for:nil)
     }
     
-    var statusBarStyle = UIStatusBarStyle.Default
-    override func preferredStatusBarStyle() -> UIStatusBarStyle {
+    var statusBarStyle = UIStatusBarStyle.default
+    override var preferredStatusBarStyle: UIStatusBarStyle {
         return statusBarStyle
     }
-    
-    
 }
-

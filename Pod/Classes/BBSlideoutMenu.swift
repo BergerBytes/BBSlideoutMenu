@@ -141,7 +141,6 @@ open class BBSlideoutMenu: UIView  {
      - parameter didPresentMenu: Calls when the animation is completed, Pass nil to ignore callback
      */
     open func presentSlideMenu(_ animate: Bool?, didPresentMenu: (() -> Void)?) {
-        
         if savedBackgroundColor == nil {
             savedBackgroundColor = self.backgroundColor;
         }
