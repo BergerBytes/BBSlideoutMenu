@@ -8,21 +8,16 @@
 
 Pod::Spec.new do |s|
   s.name             = "BBSlideoutMenu"
-  s.version          = "0.2.1"
+  s.version          = "0.4"
   s.summary          = "A simple 'one line of code' Slideout Menu solution without the need for segues"
 
-# This description is used to generate tags and improve search results.
-#   * Think: What does it do? Why did you write it? What is the focus?
-#   * Try to keep it short, snappy and to the point.
-#   * Write the description between the DESC delimiters below.
-#   * Finally, don't worry about the indent, CocoaPods strips it!  
   s.description      = <<-DESC "A simple solution for creating great looking slideout menus quickly. By nesting the menu view in the scene dock you can visually edit the menu whilst skipping the need to manage data between segues and view controllers."
                        DESC
 
   s.homepage         = "http://bergerbytes.io/cocoapods/bbslideoutmenu/"
   # s.screenshots    = "https://bergerbytesco.files.wordpress.com/2016/03/giphy.gif"
   s.license          = 'MIT'
-  s.author           = { "Michael Berger" => "contact@bergerbytes.co" }
+  s.author           = { "Michael Berger" => "contact@bergerbytes.io" }
   s.source           = { :git => "https://github.com/BergerBytes/BBSlideoutMenu.git", :tag => s.version.to_s }
   s.social_media_url = 'https://twitter.com/bergerbytes'
 
