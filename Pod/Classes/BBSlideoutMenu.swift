@@ -269,7 +269,7 @@ open class BBSlideoutMenu: UIView {
             delay: 0.0,
             usingSpringWithDamping: 1,
             initialSpringVelocity: 0.0,
-            options: UIViewAnimationOptions(),
+            options: UIView.AnimationOptions(),
             
             animations: { () -> Void in
                 self.keyWindow.layoutIfNeeded()
@@ -343,11 +343,11 @@ open class BBSlideoutMenu: UIView {
         }
     }
     
-    func tapHandle(_ tap: UITapGestureRecognizer) {
+    @objc func tapHandle(_ tap: UITapGestureRecognizer) {
         dismissSlideMenu(true, time: nil)
     }
     
-    func panHandle(_ pan: UIPanGestureRecognizer) {
+    @objc func panHandle(_ pan: UIPanGestureRecognizer) {
         if keyWindow == nil {
             keyWindow = UIApplication.shared.keyWindow!
         }
@@ -391,7 +391,7 @@ open class BBSlideoutMenu: UIView {
         }
     }
     
-    func edgeHandle(_ edge: UIScreenEdgePanGestureRecognizer) {
+    @objc func edgeHandle(_ edge: UIScreenEdgePanGestureRecognizer) {
         if keyWindow == nil {
             keyWindow = UIApplication.shared.keyWindow!
         }
