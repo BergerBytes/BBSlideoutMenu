@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "BBSlideoutMenu"
-  s.version          = "0.4.1"
+  s.version          = "0.4"
   s.summary          = "A simple 'one line of code' Slideout Menu solution without the need for segues"
 
   s.description      = <<-DESC "A simple solution for creating great looking slideout menus quickly. By nesting the menu view in the scene dock you can visually edit the menu whilst skipping the need to manage data between segues and view controllers."
