@@ -10,8 +10,6 @@ import UIKit
 import BBSlideoutMenu
 
 class ViewController: UIViewController, BBSlideoutMenuDelegate {
-
-    
     @IBOutlet var buttonSlideMenu: BBSlideoutMenu!
     override func viewDidAppear(_ animated: Bool) {
        super.viewDidAppear(animated)
@@ -21,7 +19,6 @@ class ViewController: UIViewController, BBSlideoutMenuDelegate {
         buttonSlideMenu.delegate = self
     }
 
-    
     func updateSettings() {
         buttonSlideMenu.slideTravelPercent = CGFloat(travelSlider.value)
         buttonSlideMenu.shrinkAmount       = CGFloat(Double(shrinkAmountTextField.text!)!)
@@ -122,19 +119,22 @@ class ViewController: UIViewController, BBSlideoutMenuDelegate {
     @IBOutlet weak var zoomFactorReadoutLabel: UILabel!
     @IBAction func onZoomFactorChanged(sender: UISlider) {
         zoomFactorReadoutLabel.text = String.localizedStringWithFormat("%.2f", sender.value)
+        updateSettings()
     }
+    
     @IBOutlet weak var travelSlider: UISlider!
     @IBOutlet weak var travelSliderReadoutLabel: UILabel!
      @IBAction func onTravelSliderChanged(sender: UISlider) {
         travelSliderReadoutLabel.text = String.localizedStringWithFormat("%.2f", sender.value)
+        updateSettings()
     }
     
     @IBOutlet weak var springDampingSlider: UISlider!
     @IBOutlet weak var springDampingReadoutLabel: UILabel!
     @IBAction func onSpringDampingSliderChanged(sender: UISlider) {
         springDampingReadoutLabel.text = String.localizedStringWithFormat("%.2f", sender.value)
+        updateSettings()
     }
-    
     
     @IBOutlet weak var leftSwipeImageView: UIImageView!
     @IBOutlet weak var rightSwipeImageView: UIImageView!
