@@ -1,6 +1,6 @@
 //
 //  BBSlideoutMenu.swift
-//  BergerBytes.co
+//  BergerBytes.io
 //
 //  Created by Michael Berger on 3/7/16.
 //  Copyright © 2016 bergerbytes. All rights reserved.
@@ -23,7 +23,7 @@ public protocol BBSlideoutMenuDelegate: class {
     func didStartEdgePanFor(slideoutMenu menu: BBSlideoutMenu)
 }
 
-open class BBSlideoutMenu: UIView  {
+open class BBSlideoutMenu: UIView {
     
     //MARK: - Inspectables
     
@@ -101,10 +101,11 @@ open class BBSlideoutMenu: UIView  {
     fileprivate
     var menuAnchor: NSLayoutConstraint!
     var viewImage: UIView?
-    var viTop: NSLayoutConstraint!
-    var viBottom: NSLayoutConstraint!
-    var viSlide: NSLayoutConstraint!
-    var viRatio: NSLayoutConstraint!
+    var viewTopConstraint: NSLayoutConstraint!
+    var viewBottomConstraint: NSLayoutConstraint!
+    var viewSlideSideConstraint: NSLayoutConstraint!
+    var viewRatioConstraint: NSLayoutConstraint!
+    var edgePinConstraint: NSLayoutConstraint!
     var coverView: UIImageView!
     var keyWindow: UIWindow!
     var slideAmount: CGFloat!
@@ -113,10 +114,9 @@ open class BBSlideoutMenu: UIView  {
     //MARK: - Functions
     
     /**
-    Sets up a EdgePan gesture to open the Slide Menu. Must be called again if the slideDirection has been changed
-    */
+     Sets up a EdgePan gesture to open the Slide Menu. Must be called again if the slideDirection has been changed
+     */
     open func setupEdgePan() {
-        
         if savedBackgroundColor == nil {
             savedBackgroundColor = self.backgroundColor;
         }
@@ -125,12 +125,13 @@ open class BBSlideoutMenu: UIView  {
             keyWindow = UIApplication.shared.keyWindow!
         }
         
-        if  let epGesture = edgePanGesture,
-            let index = self.keyWindow.gestureRecognizers?.index(of: epGesture) {
-                self.keyWindow.gestureRecognizers?.remove(at: index)
+        if let edgePan = edgePanGesture,
+            let index = self.keyWindow.gestureRecognizers?.index(of: edgePan) {
+            self.keyWindow.gestureRecognizers?.remove(at: index)
         }
         
-        edgePanGesture = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(BBSlideoutMenu.edgeHandle(_:)))
+        edgePanGesture = UIScreenEdgePanGestureRecognizer(target: self,
+                                                          action: #selector(BBSlideoutMenu.edgeHandle(_:)))
         edgePanGesture?.edges = slideDirection == .left ? .right : .left
         keyWindow.gestureRecognizers?.append(edgePanGesture!)
     }
@@ -140,8 +141,7 @@ open class BBSlideoutMenu: UIView  {
      - parameter animate: A Bool that specifies whether to animate the transition
      - parameter didPresentMenu: Calls when the animation is completed, Pass nil to ignore callback
      */
-    open func presentSlideMenu(_ animate: Bool?, didPresentMenu: (() -> Void)?) {
-        
+    open func presentSlideMenu(animated: Bool, didPresentMenu: (() -> Void)?) {
         if savedBackgroundColor == nil {
             savedBackgroundColor = self.backgroundColor;
         }
@@ -152,24 +152,31 @@ open class BBSlideoutMenu: UIView  {
         
         let size = keyWindow.frame.size
         
+        edgePinConstraint = slideDirection == .left
+            ? self.trailingAnchor.constraint(equalTo: keyWindow.trailingAnchor, constant: 0)
+            : self.leadingAnchor.constraint(equalTo: keyWindow.leadingAnchor, constant: 0)
+        
         //MARK: Image VIew
         // Create, Configure and add a screenshot of the current view
-        viewImage = keyWindow.snapshotView(afterScreenUpdates: false)
-        guard (viewImage != nil) else {
+        self.viewImage?.removeFromSuperview()
+        guard let viewImage = keyWindow.snapshotView(afterScreenUpdates: false) else {
             return
         }
-        viewImage!.frame = keyWindow.frame
-        viewImage!.translatesAutoresizingMaskIntoConstraints = false
-        viewImage!.clipsToBounds = true
         
-        viTop    = viewImage!.topAnchor.constraint(equalTo: keyWindow.topAnchor, constant: 0)
-        viBottom = viewImage!.bottomAnchor.constraint(equalTo: keyWindow.bottomAnchor, constant: 0)
-        viSlide  = slideDirection == .left ? viewImage!.trailingAnchor.constraint(equalTo: keyWindow.trailingAnchor, constant: 0) : viewImage!.leadingAnchor.constraint(equalTo: keyWindow.leadingAnchor, constant: 0)
+        self.viewImage = viewImage
         
+        viewImage.frame = keyWindow.frame
+        viewImage.translatesAutoresizingMaskIntoConstraints = false
+        viewImage.clipsToBounds = true
         
+        viewTopConstraint = viewImage.topAnchor.constraint(equalTo: keyWindow.topAnchor, constant: 0)
+        viewBottomConstraint = viewImage.bottomAnchor.constraint(equalTo: keyWindow.bottomAnchor, constant: 0)
+        viewSlideSideConstraint = slideDirection == .left
+            ? viewImage.trailingAnchor.constraint(equalTo: keyWindow.trailingAnchor, constant: 0)
+            : viewImage.leadingAnchor.constraint(equalTo: keyWindow.leadingAnchor, constant: 0)
         
-        viRatio = NSLayoutConstraint(
-            item: viewImage!,
+        viewRatioConstraint = NSLayoutConstraint(
+            item: viewImage,
             attribute: .height,
             relatedBy: .equal,
             toItem: viewImage,
@@ -177,14 +184,14 @@ open class BBSlideoutMenu: UIView  {
             multiplier: (size.height / size.width),
             constant: 0)
         
-        viewImage!.addConstraint(viRatio)
+        viewImage.addConstraint(viewRatioConstraint)
         
-        keyWindow.addSubview(viewImage!)
+        keyWindow.addSubview(viewImage)
         
-        viRatio.isActive  = true
-        viTop.isActive    = true
-        viBottom.isActive = true
-        viSlide.isActive  = true
+        viewRatioConstraint.isActive = true
+        viewTopConstraint.isActive = true
+        viewBottomConstraint.isActive = true
+        viewSlideSideConstraint.isActive = true
         
         //MARK: Background View
         coverView = UIImageView(frame: keyWindow.frame)
@@ -196,53 +203,47 @@ open class BBSlideoutMenu: UIView  {
         } else {
             coverView.backgroundColor = self.backgroundColor
         }
+        
         coverView.isHidden = false
-        keyWindow.insertSubview(coverView, belowSubview: viewImage!)
+        keyWindow.insertSubview(coverView, belowSubview: viewImage)
         //MARK: Slideout View
         
-        keyWindow.insertSubview(self, belowSubview: viewImage!)
+        keyWindow.insertSubview(self, belowSubview: viewImage)
         
         self.translatesAutoresizingMaskIntoConstraints = false
-                
-        self.heightAnchor.constraint(equalToConstant: size.height).isActive                      = true
+        
+        self.heightAnchor.constraint(equalToConstant: size.height).isActive = true
         self.widthAnchor.constraint(equalToConstant: (size.width * slideTravelPercent)).isActive = true
-        self.centerYAnchor.constraint(equalTo: keyWindow.centerYAnchor).isActive           = true
+        self.centerYAnchor.constraint(equalTo: keyWindow.centerYAnchor).isActive = true
         if slideDirection == .left {
-            menuAnchor = self.leadingAnchor.constraint(equalTo: viewImage!.trailingAnchor)
+            menuAnchor = self.leadingAnchor.constraint(equalTo: viewImage.trailingAnchor)
         } else {
-            menuAnchor = self.trailingAnchor.constraint(equalTo: viewImage!.leadingAnchor)
+            menuAnchor = self.trailingAnchor.constraint(equalTo: viewImage.leadingAnchor)
         }
+        
         menuAnchor.isActive = true
-        
         setupStartingValues()
-        
-        
         slideAmount = slideDirection == .left ? -(keyWindow.bounds.width * slideTravelPercent) : keyWindow.bounds.width * slideTravelPercent
         
-        if let shouldAnimate = animate {
-            
-            setupDestinationValues()
-            
-            if shouldAnimate {
-                animateSlideOpen { () -> Void in
-                    didPresentMenu?()
-                }
-            } else {
-              delegate?.willPresent(slideoutMenu: self)
-                self.viewImage!.layer.cornerRadius = 5
-                self.transform = CGAffineTransform(scaleX: 1, y: 1)
+        setupDestinationValues()
+        if animated {
+            animateSlideOpen { () -> Void in
                 didPresentMenu?()
-              delegate?.didPresent(slideoutMenu: self)
             }
-            
+        } else {
+            delegate?.willPresent(slideoutMenu: self)
+            self.viewImage?.layer.cornerRadius = 5
+            self.transform = CGAffineTransform(scaleX: 1, y: 1)
+            didPresentMenu?()
+            delegate?.didPresent(slideoutMenu: self)
         }
+        
+        edgePinConstraint.isActive = true
         
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(BBSlideoutMenu.panHandle(_:)))
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(BBSlideoutMenu.tapHandle(_:)))
-        self.viewImage!.gestureRecognizers = [panGesture, tapGesture]
-        
+        self.viewImage?.gestureRecognizers = [panGesture, tapGesture]
     }
-    
     
     /**
      Dismisses the slide menu
@@ -255,12 +256,13 @@ open class BBSlideoutMenu: UIView  {
             keyWindow = UIApplication.shared.keyWindow!
         }
         
-      delegate?.willDismiss(slideoutMenu: self)
+        delegate?.willDismiss(slideoutMenu: self)
         
-        viTop.constant    = 0
-        viBottom.constant = -viTop.constant
-        viSlide.constant  = 0
+        viewTopConstraint.constant    = 0
+        viewBottomConstraint.constant = -viewTopConstraint.constant
+        viewSlideSideConstraint.constant  = 0
         menuAnchor.constant = menuOffset * (slideDirection == .right ? 1 : -1)
+        edgePinConstraint.isActive = false
         
         UIView.animate(
             withDuration: animated ? (time != nil ? time! : slideTime) : 0,
@@ -270,99 +272,82 @@ open class BBSlideoutMenu: UIView  {
             options: UIViewAnimationOptions(),
             
             animations: { () -> Void in
-                
                 self.keyWindow.layoutIfNeeded()
                 self.viewImage!.layer.cornerRadius = 0
                 self.self.transform = CGAffineTransform(scaleX: self.zoomFactor, y: self.zoomFactor)
                 
-            }) { (complete) -> Void in
-                
-                self.coverView.removeFromSuperview()
-                self.removeFromSuperview()
-                
-                UIView.animate(withDuration: 0.1,
-                    animations: { () -> Void in
-                        self.viewImage!.alpha = 0
-                        
-                    }, completion: { (completed) -> Void in
-                        self.viewImage!.removeFromSuperview()
-                        if let epGesture = self.edgePanGesture {
-                            if self.keyWindow.gestureRecognizers!.index(of: epGesture) == nil {
-                                self.keyWindow.gestureRecognizers?.append(epGesture)
-                            }
-                        }
-                      self.delegate?.didDismiss(slideoutMenu: self)
-                })
-                
+        }) { (complete) -> Void in
+            self.coverView.removeFromSuperview()
+            self.removeFromSuperview()
+            
+            UIView.animate(withDuration: 0.1,
+                           animations: { () -> Void in
+                            self.viewImage!.alpha = 0
+                            
+            }, completion: { (completed) -> Void in
+                self.viewImage!.removeFromSuperview()
+                if let epGesture = self.edgePanGesture {
+                    if self.keyWindow.gestureRecognizers!.index(of: epGesture) == nil {
+                        self.keyWindow.gestureRecognizers?.append(epGesture)
+                    }
+                }
+                self.delegate?.didDismiss(slideoutMenu: self)
+            })
         }
-        
     }
     
     //MARK: Internal Functions
     
     fileprivate func setupDestinationValues() {
-        viTop.constant    = shrinkAmount
-        viBottom.constant = -viTop.constant
-        viSlide.constant  = slideAmount
+        viewTopConstraint.constant = shrinkAmount
+        viewBottomConstraint.constant = -viewTopConstraint.constant
+        viewSlideSideConstraint.constant = slideAmount
         menuAnchor.constant = 0
     }
     
     fileprivate func setupStartingValues() {
         menuAnchor.constant = menuOffset * (slideDirection == .right ? 1 : -1)
-        self.transform = CGAffineTransform(scaleX: zoomFactor, y: zoomFactor)
+        transform = CGAffineTransform(scaleX: zoomFactor, y: zoomFactor)
         keyWindow.layoutIfNeeded()
     }
     
-    fileprivate func animateSlideOpen(_ animationEnd: ( () -> Void )?) {
-        
+    fileprivate func animateSlideOpen(_ animationEnd: ( () -> Void )? = nil) {
         if keyWindow == nil {
             keyWindow = UIApplication.shared.keyWindow!
         }
         
-      delegate?.willPresent(slideoutMenu: self)
+        delegate?.willPresent(slideoutMenu: self)
         
         if let epGesture = edgePanGesture,
             let index = self.keyWindow.gestureRecognizers?.index(of: epGesture) {
-                self.keyWindow.gestureRecognizers?.remove(at: index)
+            self.keyWindow.gestureRecognizers?.remove(at: index)
         }
         
         setupDestinationValues()
         
         UIView.animate(withDuration: slideTime,
-            delay: 0.0,
-            usingSpringWithDamping: springEnabled ? springDamping : 1,
-            initialSpringVelocity: 0.0,
-            options: .curveLinear,
-            
-            animations: { () -> Void in
-                
-                self.keyWindow.layoutIfNeeded()
-                self.viewImage!.layer.cornerRadius = 5
-                self.transform = CGAffineTransform(scaleX: 1, y: 1)
-                
-            }) { (complete) -> Void in
-              self.delegate?.didPresent(slideoutMenu: self)
-                animationEnd?()
+                       delay: 0.0,
+                       usingSpringWithDamping: springEnabled ? springDamping : 1,
+                       initialSpringVelocity: 0.0,
+                       options: .curveLinear,
+                       
+                       animations: { () -> Void in
+                        
+                        self.keyWindow.layoutIfNeeded()
+                        self.viewImage!.layer.cornerRadius = 5
+                        self.transform = CGAffineTransform(scaleX: 1, y: 1)
+                        
+        }) { (complete) -> Void in
+            self.delegate?.didPresent(slideoutMenu: self)
+            animationEnd?()
         }
-        
-        UIView.animate(withDuration: slideTime, animations: { () -> Void in
-            
-            
-            
-            
-            }, completion: { (complete) -> Void in
-                
-        }) 
-        
     }
-    
     
     func tapHandle(_ tap: UITapGestureRecognizer) {
         dismissSlideMenu(true, time: nil)
     }
     
     func panHandle(_ pan: UIPanGestureRecognizer) {
-        
         if keyWindow == nil {
             keyWindow = UIApplication.shared.keyWindow!
         }
@@ -372,12 +357,12 @@ open class BBSlideoutMenu: UIView  {
         
         switch pan.state {
         case .changed:
-            
+            edgePinConstraint.isActive = false
             if percentage >= 1 { percentage = 1 }
             
-            viSlide.constant  = slideAmount - (slideAmount * percentage)
-            viTop.constant    = shrinkAmount - (shrinkAmount * percentage)
-            viBottom.constant = -viTop.constant
+            viewSlideSideConstraint.constant  = slideAmount - (slideAmount * percentage)
+            viewTopConstraint.constant    = shrinkAmount - (shrinkAmount * percentage)
+            viewBottomConstraint.constant = -viewTopConstraint.constant
             
             let scale = 1 - ((1 - zoomFactor) * percentage)
             transform = CGAffineTransform(scaleX: scale, y: scale)
@@ -390,85 +375,69 @@ open class BBSlideoutMenu: UIView  {
             }
             
             keyWindow.layoutIfNeeded()
-            
         case .ended:
-            
             let v = pan.velocity(in: keyWindow).x
             
-            if (slideDirection == .left ? v : -v) > 500 || abs(percentage) > 0.8 {
+            let shouldDismiss = (slideDirection == .left ? v : -v) > 500 || abs(percentage) > 0.8
+            edgePinConstraint.isActive = shouldDismiss
+            
+            if shouldDismiss {
                 dismissSlideMenu(true, time: slideTime - abs((slideTime * Double(percentage))))
             } else {
                 animateSlideOpen(nil)
             }
-            
         default:
             break
         }
-        
     }
-    
-    
     
     func edgeHandle(_ edge: UIScreenEdgePanGestureRecognizer) {
         if keyWindow == nil {
             keyWindow = UIApplication.shared.keyWindow!
         }
         
-      delegate?.didStartEdgePanFor(slideoutMenu: self)
-        
         var transition = edge.translation(in: self)
         var percentage = (transition.x / self.bounds.width)
         
         switch edge.state {
-            
         case .began:
-            
+            delegate?.didStartEdgePanFor(slideoutMenu: self)
             transition = edge.translation(in: self)
-            
-            presentSlideMenu(nil, didPresentMenu: nil)
-            
+            presentSlideMenu(animated: false, didPresentMenu: nil)
+            edgePinConstraint.isActive = false
         case .changed:
+            edgePinConstraint.isActive = false
             percentage = transition.x / self.bounds.width * (slideDirection == .left ? -1 : 1)
             
             if percentage < 0 { percentage = 0 }
             
-            viSlide.constant  = (slideAmount * percentage)
-            viTop.constant    = (shrinkAmount * percentage)
-            viBottom.constant = -viTop.constant
+            viewSlideSideConstraint.constant  = (slideAmount * percentage)
+            viewTopConstraint.constant    = (shrinkAmount * percentage)
+            viewBottomConstraint.constant = -viewTopConstraint.constant
             
             let offset = menuOffset * (slideDirection == .right ? 1 : -1)
             menuAnchor.constant = offset - (offset * percentage)
             
             viewImage!.layer.cornerRadius = (5 * percentage)
             
-            
             let scale = zoomFactor + ((1 - zoomFactor) * percentage)
             transform = CGAffineTransform(scaleX: scale, y: scale)
         case .ended:
-            
             let v = edge.velocity(in: keyWindow).x
-            
-            if (slideDirection == .right ? v : -v) > 500 || abs(percentage) > 0.5 {
-                
-                animateSlideOpen({ () -> Void in
-                    
-                })
-                
+            let shouldPersist = (slideDirection == .right ? v : -v) > 500 || abs(percentage) > 0.5
+            edgePinConstraint.isActive = !shouldPersist
+
+            if shouldPersist {
+                animateSlideOpen()
             } else {
                 dismissSlideMenu(true, time: 0.1)
             }
-            
         default:
             break
         }
-        
     }
-    
-    
-    
     //MARK: -
 }
-
 
 public extension BBSlideoutMenuDelegate {
     func didPresent(slideoutMenu menu: BBSlideoutMenu) {}
